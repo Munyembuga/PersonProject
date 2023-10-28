@@ -3,10 +3,11 @@ import React from 'react'
 import { MaterialIcons } from '@expo/vector-icons';
 
 
-const PromosDetails = () => {
+const PromosDetails = ({route}) => {
+     const item =route.params
   return (
     <View>
-      <Text>PromosDetails</Text>
+      {/* <Text>PromosDetails</Text> */}
       <View style={{
           flexDirection:'row',
           width:'90%',
@@ -27,7 +28,11 @@ const PromosDetails = () => {
                   marginBottom:15,
                   marginTop:-10
 
-              }}>Gocery</Text>
+              }}
+              >
+                  {/* Gocery */}
+                  {item.name}
+              </Text>
               <Text  style={{
                   color:'white',
                   fontSize:18,
@@ -48,7 +53,7 @@ const PromosDetails = () => {
                   fontWeight:'500',
                 
                   
-              }}>LONG BREAD</Text>
+              }}>{item.name}</Text>
               <View style={{
                   backgroundColor:'#17c568',
                   width:200,
@@ -63,7 +68,7 @@ const PromosDetails = () => {
                   }}>CHECK OUT</Text>
               </View>
           </View>
-          <Image source={require('../../assets/Vegetables/Orange.png')} style={{
+          <Image source={item.image} style={{
               width:120,
               height:200,
               objectFit:'contain'

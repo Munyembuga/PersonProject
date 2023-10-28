@@ -32,9 +32,10 @@ const HomeNavigator = () => {
                         // <FontAwesome name="shopping-basket" size={34} color={color} style={{
                         //     marginBottom:-4
                         // } }/>
-                        <FontAwesome5 name="shopping-cart"  size={34} color={color}
+                        <FontAwesome5 name="shopping-cart"  size={30} color={color}
                         style={{
-                            marginBottom:-4
+                            
+                            marginTop:-12
                         } }/>
                         
                      
@@ -52,17 +53,28 @@ const HomeNavigator = () => {
                 component={Cards}
                 options={{
                     tabBarIcon: ({ color }) => (
-                        <Zocial name="cart" size={34} color={color} />
+                        <Zocial name="cart" size={40} color={color} 
+                        
+                        style={{
+                           
+                            marginTop:-18
+                        } }/>
                     ),
                     headerShown:false
                 }}
             />
             <Tab.Screen 
-                name="Orderss"
+                name="Orders"
                 component={OrderTabs}
                 options={{
                     tabBarIcon:({color})=>(
-                        <FontAwesome name="shopping-bag" size={34} color={color} />
+                        <FontAwesome name="shopping-bag" size={34} 
+                        color={color}
+                        style={{
+                           
+                            marginTop:-18
+                        } }
+                         />
                         // <Foundation name="shopping-cart" size={34} color={color} />
                     )
                 }}
@@ -72,7 +84,13 @@ const HomeNavigator = () => {
                 component={Profile}
                 options={{
                     tabBarIcon:({color})=>(
-                        <MaterialCommunityIcons name="account" size={34} color="black" />
+                        <MaterialCommunityIcons name="account" size={34} 
+                        color={color}
+                        style={{
+                           
+                            marginTop:-18
+                        } }
+                        />
                     )
                 }}
             />

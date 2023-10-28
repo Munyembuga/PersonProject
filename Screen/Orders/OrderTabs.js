@@ -18,7 +18,7 @@ const OrderTabs = () => {
         activeTintColor: "#17c568",
         inactiveTintColor: "#b5b5b5",
         labelStyle: { fontSize: 14, fontWeight: "bold" },
-        indicatorStyle: { backgroundColor: "#17c568" },
+        indicatorStyle: { backgroundColor: "#17c568"},
       }}
     >
       <Tab.Screen

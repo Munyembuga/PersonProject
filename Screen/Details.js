@@ -1,21 +1,63 @@
 import { View, Text,StyleSheet,Image } from 'react-native'
-import React from 'react'
+import React, { useContext } from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
-
-
+import { addCards } from './Cards/storeCards'
+import { useDispatch, useSelector } from 'react-redux'
+import { setAuthLoaded, setAuthToken,setAuthStatus } from './Autho/Slice'
+import { setAddCards } from './Cards/sliceCards'
+import axios from 'axios'
 const Details = ({route}) => {
-    const {item} = route.params
+    const item = route.params
+    console.log(item,"item")
     const navigation=useNavigation();
+    const dispatch = useDispatch();
+    const selectCards =useSelector((state) => state.cards.card)
+    const {authToken} =useSelector((state) => state.auth);
+    const AddcardsItem = async()=>{
+        axios({
+            method:"POST",
+            url:` https://grocery-9znl.onrender.com/api/v1/cart/add`,
+            data:{
+                groceryId:item._id, // Assuming item.id is the ID of the grocery item
+                count: 1,
+            },
+            headers:{
+                Authorization:`Bearer ${authToken}`,
+            },
+
+        })
+        .then((response) =>{
+            alert("sucess")
+            console.log(response,"sucess to add")
+        }).catch((error) =>{
+            console.log(error,"fail to add cars")
+        })
+    }
+
+
+
+
+    // const addCardsData= (item) =>{
+    //     dispatch(setAddCards(item))
+       
+    // }
+    // console.log(addCardsData,"gogss")
+    
+
+
+    
+    //  console.log(selectCards,"goosss")
+    // const cardsdata=()=>{
+    //     return 
+    // }
    
-    console.log(item)
+    // console.log(item)
   return (
     <View>
       
       <View>
-          <Image source={
-              item.image
-          } 
+          <Image source={{uri:item.picture} } 
           style={styles.image}/>
           <View style={styles.title}>
               <Text style={{
@@ -38,7 +80,10 @@ const Details = ({route}) => {
                   marginHorizontal:30,
                   paddingTop:5
 
-              }}>{item.discount}</Text>
+              }}> 
+              {/* {item.discount} */}
+              10%
+              </Text>
           </View>
           <Text style={
               styles.price
@@ -50,7 +95,7 @@ const Details = ({route}) => {
               color:'gray',
               fontSize:20,
               marginLeft:15,
-          }}> {item.package}</Text>
+          }}> {item.amount}</Text>
           <Text style={{
               color:'#000',
               fontSize:20,
@@ -70,7 +115,13 @@ const Details = ({route}) => {
               }} >
             {item.description}
               </Text>
-            <TouchableOpacity onPress ={() => navigation.navigate("Cards",{item:item})}>
+            <TouchableOpacity onPress ={ () => AddcardsItem() 
+           
+                // addCardsData(item)
+                // navigation.navigate("Cards",item)
+                }>
+             {/* <TouchableOpacity> */}
+
                 <Text style={styles.cardsbtn}>
                     Add cards
                 </Text>

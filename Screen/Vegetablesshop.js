@@ -1,20 +1,46 @@
 import { View, Text,StyleSheet,Image,TextInput,FlatList } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { EvilIcons } from '@expo/vector-icons';
 import data from './ShopsJon';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 
 
 const Vegetablesshop = ({route}) => {
-  const {title} = route.params
+  const category = route.params
   const navigation = useNavigation();
-  navigation.setOptions({
-    title: title,
-  })
-  const filteredData = data.filter((item)=>item.Categories === title)
-  console.log("filter data",filteredData)
+  // navigation.setOptions({
+  //   title: title,
+  // })
+  // const filteredData = data.filter((item)=>item.Categories === title)
+  // console.log("filter data",filteredData)
+  const {authToken} =useSelector((state) => state.auth);
+    const [grocery,setGrocery] = useState([])
+    const fetchGrocery= async () =>{
+        axios({
+            method:'GET',
+            url: ` https://grocery-9znl.onrender.com/api/v1/grocery/bycategory/${category._id}`,
+            headers:{
+                Authorization:`Bearer ${authToken}`,
+            },
+        })
+        .then((response) =>{
+            // console.log(response,"Response")
+            setGrocery(response.data.data)
+        })
+        .catch((error)=>{
+            console(error,"error"),
+            alert(error.response.data.message)
+        })
+    }
+    useEffect(()=>{
+        if(authToken){
+            fetchGrocery()
+        }
+    }),[authToken]
   return (
     <View>
       <View>
@@ -32,13 +58,13 @@ const Vegetablesshop = ({route}) => {
       {/* <Text>{title}</Text> */}
      
       <FlatList 
-      data={filteredData}
+      data={grocery}
       numColumns={2}
       keyExtractor ={(item)=> item.id} 
       renderItem={({ item }) =>(
-        <TouchableOpacity onPress={() => navigation.navigate("Details",{item:item})}>
+        <TouchableOpacity onPress={() => {navigation.navigate("Details",item)}}>
         <View style={styles.container}>
-          <Image source={item.image} style={styles.image}/>
+          <Image source={{uri:item.picture}} style={styles.image}/>
           <Text style={{
         alignItems:'center',
         marginLeft:10,
@@ -55,7 +81,7 @@ const Vegetablesshop = ({route}) => {
         fontWeight:'400',
         color:'Gray'
 
-      }}>{item.price}/Kg</Text>
+      }}>{item.amount}</Text>
       <View style={styles.shopdown}>
       <Text style={{
         backgroundColor:'#febd3d',
@@ -67,7 +93,8 @@ const Vegetablesshop = ({route}) => {
         textAlign:'center'
       }}
       >
-        {item.discount}
+        {/* {item.discount} */}
+        10%
       </Text>
       <Text style={{
         
@@ -78,14 +105,14 @@ const Vegetablesshop = ({route}) => {
         fontWeight:'400'
 
       }}
-      >{item.afterdiscount}</Text>
+      >${item.price}</Text>
       <Text
       style={{
         width:25,
         height:25,
         backgroundColor:'#08c25e',
         color:'white',
-        marginLeft:40,
+        marginLeft:20,
         textAlign:'center',
         borderRadius:5,
         

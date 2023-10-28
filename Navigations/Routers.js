@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
-import { NavigationContainer } from '@react-navigation/native'
+// import { NavigationContainer } from '@react-navigation/native'
 // import Landing from '../Sreens/Landing'
 import Home from '../Screen/Home'
 import Profile from '../Screen/Profile/Profile'
@@ -25,22 +25,56 @@ import CompletedScreen from '../Screen/Orders/ComplededScreen'
 import OrderTabs from '../Screen/Orders/OrderTabs'
 import Myaddress from '../Screen/Profile/Address/Myaddress'
 import AddAdress from '../Screen/Profile/Address/AddAdress'
+import GetStart from '../Screen/Start/GetStart'
+import { useSelector, useDispatch } from 'react-redux'
+import { getItemAsync, setItemAsync } from 'expo-secure-store'
+import { setAuthStatus,setAuthLoaded, setAuthToken } from '../Screen/Autho/Slice'
+import * as SplashScreen from 'expo-splash-screen';
 
 
 const Stack = createStackNavigator()
 
 const Router = () => {
+    SplashScreen.preventAutoHideAsync();
+    const {authStatus,authLoaded}= useSelector((state) =>state.auth);
+    const dispatch =useDispatch();
+    console.log(authStatus,"authostatus")
+    const handleAuth = async()=>{
+    let token = await getItemAsync("authToken");
+    dispatch(setAuthToken(token))
+    if(token)
+    {
+    dispatch(setAuthStatus(true))
+    }
+    dispatch(setAuthLoaded(true))
+    SplashScreen.hideAsync();
+
+    }
+
+    useEffect(()=>{
+        handleAuth();
+    }
+    ) ;
+    if(!authLoaded){
+        return null;
+    }
+
     return (
       
             < Stack.Navigator>
-                
-                  <Stack.Screen
+
+            {authStatus ? (
+         
+
+            <>
+             <Stack.Screen
                     name={'HomeNavigator'}
                     component={HomeNavigator}
                     options={{
                         headerShown: false
                     }}
                 />
+           
                 <Stack.Screen
                     name={"Shops"}
                     component={Shops}
@@ -80,6 +114,7 @@ const Router = () => {
                     component={PromosDetails}
                     options={{
                         // headerShown: false
+                        title:'Promos Details'
                     }}
                 />
 
@@ -98,14 +133,7 @@ const Router = () => {
                         // headerShown: false
                     }}
                 /> */}
-                  <Stack.Screen name="Login" component={Login} />
-                 <Stack.Screen
-                    name={"SignUp"}
-                    component={SignUp}
-                    options={{
-                        // headerShown: false
-                    }}
-                />
+                  
               
                 
                 
@@ -189,6 +217,34 @@ const Router = () => {
                         title: "Add Address"
                     }}
                 />
+            </>)
+            :
+            (
+            <>
+            
+             <Stack.Screen
+                    name={"GetStart"}
+                    component={GetStart}
+                    options={{
+                        headerShown: false
+                        // title: "Add Address"
+                    }}
+                /> 
+                  
+            <Stack.Screen name="Login" 
+                 component={Login}
+                  />
+                <Stack.Screen
+                   name={"SignUp"}
+                   component={SignUp}
+                   options={{
+                       // headerShown: false
+                   }}
+               />
+           </> )
+            }
+                
+                 
             </Stack.Navigator>
     
     )

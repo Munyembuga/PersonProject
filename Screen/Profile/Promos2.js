@@ -10,13 +10,13 @@ const Promos2 = () => {
               <Text style={{
                   fontSize:20,
                   color:'white',
-                  fontFamily:'bold',
+                  fontWeight:'700',
                   
               }}>ORANGES</Text>
               <Text  style={{
                   fontSize:20,
                   color:'white',
-                  fontFamily:'bold'
+                  fontWeight:'700',
                   
               }}>% OFF</Text>
               <View style={{
@@ -29,8 +29,9 @@ const Promos2 = () => {
               <Text  style={{
                   fontSize:20,
                   color:'#fff',
-                  fontFamily:'bold',
-                  paddingLeft:24
+                  fontWeight:'bold',
+                  paddingLeft:24,
+
                   
               }}>Buy now</Text>
               </View>

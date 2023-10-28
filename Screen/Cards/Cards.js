@@ -1,16 +1,127 @@
-import { View, Text, Image, StyleSheet } from "react-native";
-import React from "react";
+import { View, Text, Image, StyleSheet,FlatList } from "react-native";
+import React,{useState,useEffect} from "react";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { removeFromCard,incrementAmount,setItemcards } from "./sliceCards";
+import { setAuthToken,setAuthLoaded,setAuthStatus } from "../Autho/Slice";
+import { getItemAsync } from "expo-secure-store";
+import { useIsFocused } from '@react-navigation/native';
+import NoCards from "./noCards";
+import axios from "axios";
 
-const Cards = ({route}) => {
-  const {item} =route.params;
-  console.log(item)
+const Cards = () => {
+  const isFocused = useIsFocused()
+  const dispatch = useDispatch();
+  const {authToken} =useSelector((state) => state.auth);
+  const[userCards,setUserCards] =useState([])
+  const [count,setcount] =  useState(0)
 
-  const navigation=useNavigation()
+
+  const fetchCards =() =>{
+    axios({
+      method:'GET',
+      url: `https://grocery-9znl.onrender.com/api/v1/cart/`,
+      headers:{
+          Authorization:`Bearer ${authToken}`,
+      },
+  }).then((response) =>{
+    setUserCards(response.data.data.items)
+    console.log(response.data.data.items,"user cards")
+    // console.log(response.data.data.items,"user cards")
+  }).catch((error)=>{
+    console.errlogor(error,"error to fetch");
+  })
+  }
+
+  useEffect(()=>{
+    console.log("Perfect")
+    fetchCards()
+  },[isFocused, count])
+  
+  console.log(count)
+    
+const incrementAmountCards = (itemId) => {
+  const index = userCards.findIndex((cartItem) => cartItem.grocery._id === itemId);
+
+  axios({
+    method: 'PATCH',
+    url: `https://grocery-9znl.onrender.com/api/v1/cart/updateItem/${itemId}`,
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+    data: {
+      count: userCards[index].count + 1,
+    },
+  })
+    .then((response) => {
+      setcount(count+1)
+      const updatedUserCards = [...userCards];
+      updatedUserCards[index] = response.data.data.item;
+      setUserCards(updatedUserCards);
+      console.log(response.data, "Item count updated successfully");
+    })
+    .catch((error) => {
+      console.log("Error updating item count:", error.response.data);
+    });
+};
+
+
+const decrementAmountCards = (itemId) => {
+  const index = userCards.findIndex((cartItem) => cartItem.grocery._id === itemId);
+
+  if (userCards[index].count > 1) {
+    axios({
+      method: 'PATCH',
+      url: `https://grocery-9znl.onrender.com/api/v1/cart/updateItem/${itemId}`,
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+      data: {
+        count: userCards[index].count - 1,
+      },
+    })
+      .then((response) => {
+        setcount(count-1)
+        const updatedUserCards = [...userCards];
+        updatedUserCards[index] = response.data.data.item;
+        setUserCards(updatedUserCards);
+        console.log(response.data, "Item count updated successfully");
+      })
+      .catch((error) => {
+        console.log("Error updating item count:", error.response.data);
+      });
+  } else {
+    // Handle the case where count is 1 and user tries to decrease further (optional)
+    console.log("Item count cannot be less than 1");
+  }
+};
+  const [total, setTotal] = useState(0); // Initialize total to 0
+
+  useEffect(() => {
+    // Calculate total price based on item count
+    const calculatedTotal = userCards.reduce(
+      (accumulator, item) => accumulator + item.grocery.price * item.count,
+      0
+    );
+    setTotal(calculatedTotal);
+  }, [userCards]); // Update total whenever userCards changes
+
+
+  const navigation = useNavigation();
+
+  if (userCards.length === 0) {
+    return <NoCards />;
+  }
   return (
-    <View>
+   
+    
+<View>
+   <View>
+    
+    </View>
+       <View>
       <Text
         style={{
           marginTop: 50,
@@ -23,8 +134,18 @@ const Cards = ({route}) => {
       >
         Cards
       </Text>
-      <View style={styles.ContainerCards}>
-        <View>
+      <FlatList 
+    data={userCards}
+    numColumns={1}
+    keyExtractor ={(item)=> item._id} 
+    renderItem={({item}) =>( 
+      <View style={styles.ContainerCards}
+      
+      >
+        <View style={{
+          flexDirection:'column',
+          flex:1
+        }}>
           <Text
             style={{
               backgroundColor: "#fbb62d",
@@ -36,21 +157,33 @@ const Cards = ({route}) => {
             }}
           >
             {" "}
-            {item.discount}
+            {/* {item.discount} */}
+            10%
+            
+           
           </Text>
           <Image
-            source={item.image}
+            source={{uri: item.grocery.picture}}
             style={{
               width: 90,
               height: 90,
               objectFit: "contain",
+              // marginLeft:-10
             }}
           />
         </View>
+        {/* <View style={{
+          flexDirection:'row',
+        }}> */}
+         
         <View
           style={{
-            marginLeft: 30,
+            // marginLeft: -50,
             flexDirection: "column",
+            flex:1,
+            marginLeft:40
+          
+            // justifyContent:'center'
           }}
         >
           <Text
@@ -60,16 +193,18 @@ const Cards = ({route}) => {
               fontSize: 20,
             }}
           >
-           {item.name}
+          {item.grocery.name}
+            {/* Oranges */}
           </Text>
           <Text
             style={{
               color: "#b5b5b5",
               fontSize: 15,
-              marginVertical: 8,
+              marginVertical:8,
             }}
           >
-            {item.package}
+            {item.grocery.amount}
+            {/* 200gr/package */}
           </Text>
           <Text
             style={{
@@ -79,104 +214,160 @@ const Cards = ({route}) => {
               // marginVertical:10
             }}
           >
-            ${item.price}
+            $ {item.grocery.price}
+            {/* $19.6 */}
           </Text>
         </View>
         <View
           style={{
-            marginLeft: 60,
+            // marginLeft: 26,
             flexDirection: "column",
+            flex:1,
+            marginLeft:20,
+            marginTop:18
+            // justifyContent:'center'
+            // justifyContent:'space-between'
           }}
         >
+          <TouchableOpacity >
+
+         
           <View
             style={{
               flexDirection: "row",
+              marginRight:10
+           
             }}
           >
-            <MaterialIcons name="delete" size={14} color="#ffb82e" />
+            <MaterialIcons name="delete" size={24}
+             color="#ffb82e" />
             <Text
               style={{
                 marginLeft: 10,
                 color: "#ffb82e",
                 fontWeight: "bold",
+                fontSize:16
               }}
             >
               Delete
             </Text>
           </View>
+          </TouchableOpacity>
           <View
             style={{
               flexDirection: "row",
               marginTop: 20,
             }}
           >
-            <TouchableOpacity>
-            <AntDesign name="minus" size={20} color="#b5b5b5" />
-
+            <TouchableOpacity
+              onPress={() =>{decrementAmountCards(item.grocery._id)}}
+            >
+              <AntDesign name="minus" size={20} 
+              color="#b5b5b5" />
             </TouchableOpacity>
             <Text
               style={{
                 marginHorizontal: 10,
               }}
             >
-              4
+              {item.count}
             </Text>
-            <TouchableOpacity>
-            <AntDesign name="plus" size={20} color="#17c568" />
-
+            <TouchableOpacity  onPress={() => {incrementAmountCards(item.grocery._id)}}>
+              <AntDesign name="plus" size={20} color="#17c568" />
             </TouchableOpacity>
           </View>
         </View>
+        {/* </View> */}
       </View>
-      <View style={{
-         marginTop:350,
-       }}
-       
+
+      
+    )
+  }
+    />
+
+      
+      <View
+        style={{
+          marginTop: 50,
+        }}
       >
-        <View style={{
-       flexDirection:'row'
-        }} >
-          <Text style={{
-            color:'#b5b5b5',
-            fontSize:20,
-            marginLeft:30,
-            marginTop:8
-          }}>Total</Text>
-          <Text style={{
-            marginLeft:220,
-            color:'black',
-            fontSize:25,
-            fontWeight:"bold"
-          }}>$87</Text>
+        <View
+          style={{
+            flexDirection: "row",
+          }}
+        >
+          <Text
+            style={{
+              color: "#b5b5b5",
+              fontSize: 20,
+              marginLeft: 30,
+              marginTop: 8,
+            }}
+          >
+            Total
+          </Text>
+          <Text
+            style={{
+              marginLeft: 220,
+              color: "black",
+              fontSize: 25,
+              fontWeight: "bold",
+            }}
+          >
+            ${total}
+          </Text>
         </View>
-        <TouchableOpacity onPress={() =>navigation.navigate("Paymentform")}>
-
-       
-        <View style={{
-          backgroundColor:'#17c568',
-          width:'70%',
-          height:30,
-          alignItems:'center',
-          borderRadius:5,
-          marginVertical:25,
-          marginHorizontal:50
-        }}>
-          <Text style={{
-            color:'white',
-            fontSize:20,
-            fontWeight:'bold',
-
-          }}>Checkout</Text>
-        </View>
+        <TouchableOpacity onPress={() => navigation.navigate("Paymentform",{
+        
+        bottomTabBarVisible: true,}
+        )}>
+          <View
+            style={{
+              backgroundColor: "#17c568",
+              width: "70%",
+              height: 30,
+              alignItems: "center",
+              borderRadius: 5,
+              marginVertical: 25,
+              marginHorizontal: 50,
+            }}
+          >
+            <Text
+              style={{
+                color: "white",
+                fontSize: 20,
+                fontWeight: "bold",
+              }}
+            >
+              Checkout
+            </Text>
+          </View>
         </TouchableOpacity>
       </View>
+      
     </View>
-  );
+
+
+ </View>
+
+  )
 };
 const styles = StyleSheet.create({
   ContainerCards: {
     flexDirection: "row",
-    marginLeft: 30,
+    marginLeft: 20,
+    justifyContent:"space-between",
+    
+    backgroundColor:'#2021',
+    borderRadius: 8,
+    paddingVertical: 10,
+    marginVertical: 10,
+    // marginHorizontal:10,
+    paddingHorizontal: 25,
+    marginRight:20
+
+   
+
   },
 });
 

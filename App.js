@@ -6,6 +6,10 @@ import Homepage from './Screen/Homepage';
 import MyTabs from './Screen/Homepage';
 import Router from './Navigations/Routers';
 import { NavigationContainer } from '@react-navigation/native';
+import GetStart from './Screen/Start/GetStart';
+ 
+import { store } from './Screen/Autho/configueStore';
+import { Provider } from 'react-redux';
 
 
 const slides = [
@@ -54,18 +58,23 @@ export default App = () => {
   };
 
   return showRealApp ? (
+    <Provider store={store}>
 <NavigationContainer>
        <Router/>
 </NavigationContainer>
+</Provider>
 
 
   ) : (
+    
     <AppIntroSlider
       data={slides}
       onDone={() => setShowRealApp(true)}
       renderItem={(item) => RenderItem(item.item)}
       bottomButton={bottomButton}
     />
+  
+    
   );
 };
 

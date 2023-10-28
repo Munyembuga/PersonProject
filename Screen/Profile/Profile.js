@@ -1,21 +1,83 @@
-import { View, Text,StyleSheet,Image } from 'react-native'
-import React from 'react'
+import { View, Text,StyleSheet,Image,ActivityIndicator } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { useIsFocused } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Homescreen from '../Ancountscreen'
 import { MaterialIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { setAuthoProfile,setAuthToken,setAuthStatus
+ } from '../Autho/Slice';
+ import * as SecureStore from 'expo-secure-store';
+//  import { setAuthoProfile } from '../Autho/Slice';
+ 
+ import { deleteItemAsync } from 'expo-secure-store';
+import { store } from '../Autho/configueStore';
 
 const Profile = () => {
+  const isFocused = useIsFocused()
+  const [user,setUser] = useState(null)
+  const dispatch=useDispatch();
   const navigation= useNavigation();
+
+  const fetchData = async ()=>{
+    try{
+      const authToken= await SecureStore.getItemAsync("authToken")
+      const authProfile = await SecureStore.getItemAsync("authProfile")
+      // console.log(authProfile1)
+      // console.log(authToken1)
+      // const dis = dispatch(setAuthoProfile(true));
+
+      if (authToken && authProfile) {
+       
+        setUser({
+          authToken: authToken,
+          authProfile: JSON.parse(authProfile),
+          
+         
+         
+        });
+        
+      }
+      console.log(user.authProfile.email,"ggg")
+      // console.log(user.authProfile, "ggg"); // This will log the correct email
+
+    }
+      catch (error) {
+        console.log(error, 'Error fetching credentials from secure store');
+      }
+    }
+ 
+
+  
+  useEffect(()=>{
+    console.log("Fetching data...");
+    fetchData()
+  },[isFocused])
+
+    
+  // const selector=useSelector((state) => state.auth.authProfile)
+  // console.log(selector,"Credintial")
+console.log(user,'error emailg')
+
+
+  const handleLogout =()=>{
+    deleteItemAsync('authProfile'),
+    deleteItemAsync("authToken"),
+    dispatch(setAuthToken(null));
+    dispatch(setAuthoProfile(null));
+    dispatch(setAuthStatus(false));
+
+  }
+
   return (
     <View>
       <View>
         <Text style={{
           marginLeft:20,
           fontSize:18,
-          fontWeight:'bold',
+          fontWeight:'500',
         }}>My Account</Text>
       </View>
       <View style={styles.Imagecontainer}>
@@ -29,16 +91,24 @@ const Profile = () => {
         <Text style={{
           fontSize:20,
           color:'black',
-          fontWeight:'bold'
+          fontWeight:'500'
 
-        }}>Jonathan Doe</Text>
+        }}>
+          {/* Jonathan Doe */}
+          {user?.authProfile.fullName}
+        </Text>
         <Text style={{
           fontSize:15,
           color:'gray',
           fontWeight:'500',
           marginTop:3
 
-        }} >jonathandoe@gmail.com</Text>
+        }} 
+        >
+          {/* jonathandoe@gmail.com */}
+          {/* {selector.email} */}
+          {user?.authProfile.email}
+        </Text>
         <TouchableOpacity  onPress={()=>navigation.navigate("EditProfile")}>
         <View style={styles.editcontainer}>
          <MaterialCommunityIcons name="account-edit" size={24} color="white" style={{
@@ -59,7 +129,7 @@ const Profile = () => {
           marginLeft:20,
           color:'black',
           fontSize:17,
-          fontWeight:'700',
+          fontWeight:'500',
          
         }}>Profile Settings</Text>
        
@@ -67,7 +137,7 @@ const Profile = () => {
           flexDirection:'row',
           justifyContent:'space-between',
           marginHorizontal:20,
-          color:'b5b5b5'
+          color:'gray'
         }}>
         <Text>Change Your Basic Profile</Text>
         <MaterialIcons name="keyboard-arrow-right" size={24} color="#00be5e" />
@@ -82,7 +152,7 @@ const Profile = () => {
           marginLeft:20,
           color:'black',
           fontSize:17,
-          fontWeight:'700',
+          fontWeight:'500',
           
         }}>Promos</Text>
        
@@ -105,7 +175,7 @@ const Profile = () => {
           marginLeft:20,
           color:'black',
           fontSize:17,
-          fontWeight:'700',
+          fontWeight:'500',
           
         }}>My address</Text>
        
@@ -128,7 +198,7 @@ const Profile = () => {
           marginLeft:20,
           color:'black',
           fontSize:17,
-          fontWeight:'700',
+          fontWeight:'500',
           
         }}>Terms,Privacy & Policy</Text>
        
@@ -151,7 +221,7 @@ const Profile = () => {
           marginLeft:20,
           color:'black',
           fontSize:17,
-          fontWeight:'bold',
+          fontWeight:'500',
           
         }}>Helps & Support </Text>
        
@@ -159,19 +229,20 @@ const Profile = () => {
           flexDirection:'row',
           justifyContent:'space-between',
           marginHorizontal:20,
-          color:'b5b5b5'
+          color:'gray'
         }}>
         <Text>Get support from us</Text>
         <MaterialIcons name="keyboard-arrow-right" size={24} color="#00be5e" />
         </View>
       </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handleLogout}>
       <View>
         <Text style={{
-          marginLeft:20,
-          fontSize:15,
-          color:'#b5b5b5'
+          marginLeft:140,
+          fontSize:25,
+          color:'#00fa9a',
+          fontWeight:'400'
         }}>Logout</Text>
       </View>
       </TouchableOpacity>

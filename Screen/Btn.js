@@ -16,6 +16,7 @@ const Btn = ({btnlabel,Textcolor,bgcolor,Press}) => {
 
     }}
     >
+      
      <Text style={{
          color:Textcolor,
          fontSize:22,
