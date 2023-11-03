@@ -40,7 +40,7 @@ const Profile = () => {
         });
         
       }
-      console.log(user.authProfile.email,"ggg")
+      // console.log(user.authProfile.email,"ggg")
       // console.log(user.authProfile, "ggg"); // This will log the correct email
 
     }
@@ -68,6 +68,7 @@ console.log(user,'error emailg')
     dispatch(setAuthToken(null));
     dispatch(setAuthoProfile(null));
     dispatch(setAuthStatus(false));
+    // console.log(authProfile);
 
   }
 
@@ -81,7 +82,7 @@ console.log(user,'error emailg')
         }}>My Account</Text>
       </View>
       <View style={styles.Imagecontainer}>
-        <Image source={require('../../assets/Profileimage.jpg')} style={{
+        <Image source={{uri:user?.authProfile.profilePicture}} style={{
           width:100,
           height:100,
           borderRadius:50,
@@ -241,7 +242,7 @@ console.log(user,'error emailg')
         <Text style={{
           marginLeft:140,
           fontSize:25,
-          color:'#00fa9a',
+          color:'#00be5e',
           fontWeight:'400'
         }}>Logout</Text>
       </View>

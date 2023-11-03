@@ -1,11 +1,53 @@
-import { StyleSheet, Text, View,Image } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View,Image,ActivityIndicator } from 'react-native'
+import React, { useState } from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
 import { MaterialIcons,MaterialCommunityIcons,Entypo  } from '@expo/vector-icons';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
-const Paymentform = () => {
+const Paymentform = ({route}) => {
+    const{totalAmount,cartsId} =route.params
+    const[isLoading,setIsLoading] =useState(false)
     const navigation=useNavigation()
+    console.log(totalAmount,"total amountshhs")
+    console.log(cartsId,"Cart Id s")
+    const {authToken} =useSelector((state) => state.auth);
+    const handlecheckOut = async()=>{
+        setIsLoading(true)
+        axios({
+            method:"POST",
+            url:` https://grocery-9znl.onrender.com/api/v1/cart/checkout`,
+            data:{
+                "cartId":cartsId,
+                "phone": "0783309196",
+                "deliverTo": "Kimironko",
+                "totalAmount":totalAmount
+            },
+            headers:{
+                Authorization:`Bearer ${authToken}`,
+            },
+
+        })
+        .then((response) =>{
+            alert("sucess Check out")
+            console.log(response,"sucess to add")
+            // navigation.navigate('Vegetables')
+
+        }).catch((error) =>{
+            alert("Fail to Add Carts")
+            console.log(error.response.data,"fail to check Out ")
+            // navigation.navigate('Vegetables')
+        }).finally(()=>{
+            setIsLoading(false)
+        })
+      
+       
+
+    }
+
+
+
   return (
     <View style={{
         flexDirection:'column',
@@ -21,13 +63,15 @@ const Paymentform = () => {
               
           }}>Destination</Text>
           <View style={{
-              flexDirection:'row'
+              flexDirection:'row',
+              marginRight:70,
           }}>
               
-              <Image source={require('../../assets/Vegetables/Orange.png')} style={{
-                  width:130,
-                  height:130,
-                  objectFit:'contain'
+              <Image source={require('../../assets/paymentIcon/paymentIcon2.png')} style={{
+                  width:120,
+                  height:120,
+                  objectFit:'contain',
+                  margin:10,
 
               }}/>
                <Text style={{
@@ -73,14 +117,30 @@ const Paymentform = () => {
           </View>
       </View>
       <View>
-         <Text>Total</Text>
+         {/* <Text>Total</Text> */}
           <View style={{
               flexDirection:'row',
               marginBottom:20,
-              marginTop:20
+              marginTop:40
           }}>
-              <Text>Total</Text>
-              <Text>$98</Text>
+              <Text 
+               style={{
+               
+                fontSize:22,
+                color:'#000',
+                fontWeight:'bold'
+            }}
+              >Total</Text>
+              <Text style={{
+                  marginLeft:220,
+                  fontSize:22,
+                  color:'#000',
+                  fontWeight:'bold'
+              }}>
+                  {/* $98 */}
+                  ${totalAmount}
+
+              </Text>
           </View>
       </View>
       
@@ -142,13 +202,18 @@ const Paymentform = () => {
           marginTop:40
           
       }}>
-          <TouchableOpacity onPress={()=> navigation.navigate("Trackorder")}>
-              <Text style={{
-                  textAlign:'center',
-                  color:'white',
-                  paddingTop:4,
-                  fontWeight:'600'
-              }}>Place Order</Text>
+          <TouchableOpacity onPress={()=> {handlecheckOut()}}>
+            {isLoading?
+            (<ActivityIndicator color={"#fff"} size={22}/>)
+            :
+            ( <Text style={{
+                textAlign:'center',
+                color:'white',
+                paddingTop:4,
+                fontWeight:'600'
+            }}>Place Order</Text>)
+            }
+            
           </TouchableOpacity>
       </View>
     </View>

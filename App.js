@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { View, Text, Image, StyleSheet } from "react-native";
 import AppIntroSlider from "react-native-app-intro-slider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Homepage from './Screen/Homepage';
 import MyTabs from './Screen/Homepage';
 import Router from './Navigations/Routers';
@@ -10,6 +10,9 @@ import GetStart from './Screen/Start/GetStart';
  
 import { store } from './Screen/Autho/configueStore';
 import { Provider } from 'react-redux';
+import { useFonts } from 'expo-font';
+
+import * as SplashScreen from 'expo-splash-screen';
 
 
 const slides = [
@@ -38,6 +41,29 @@ const slides = [
 
 export default App = () => {
   const [showRealApp, setShowRealApp] = useState(false);
+  
+  const [fontsLoaded] = useFonts({
+    
+    'Updock': require('./assets/fonts/Updock-Regular.ttf'),
+    'Sunrise': require('./assets/fonts/WaitingfortheSunrise-Regular.ttf'),
+    'Oswald': require('./assets/fonts/static/Oswald-Regular.ttf'),
+    'Agbalumo': require('./assets/fonts/Agbalumo-Regular.ttf'),
+    'Dancing': require('./assets/fonts/DancingScript-VariableFont_wght.ttf'),
+  })
+  useEffect(()=>{
+    async function prepare(){
+      await SplashScreen.preventAutoHideAsync()
+    }
+    prepare();
+  },[])
+  if(!fontsLoaded){
+    return null;
+
+  }
+  else{
+    SplashScreen.hideAsync();
+  }
+
 
   const RenderItem = (item) => {
     console.log(item.title, "Item from function");
@@ -92,12 +118,15 @@ const styles = StyleSheet.create({
     marginBottom:10,
     marginTop:80,
     fontSize:30,
+    fontFamily:'Agbalumo',
   },
   text: {
-    color: "#000",
+    color: "gray",
     textAlign: "center", 
     marginTop:30,
     fontSize:20,
+    fontFamily:'Dancing',
+    fontWeight:'bold'
   },container: {
     flex: 1,
     backgroundColor: '#fff',

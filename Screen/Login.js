@@ -11,7 +11,7 @@ import {setItemAsync} from 'expo-secure-store';
 import { useDispatch } from "react-redux";
 import * as SecureStore from 'expo-secure-store';
 import axios from "axios";
-import { setAuthoProfile,
+import {setAuthoProfile,
   setAuthStatus,
   setAuthToken
  } from "./Autho/Slice";
@@ -70,7 +70,10 @@ const Login = (props) => {
         },
       })
         .then((response) =>  {
+          
           dispatch(setAuthoProfile(response.data.user));
+          // console.log(response.data.user,"auto profileendjj")
+          // console.log(authProfile,'jdkskkds')
           dispatch(setAuthToken(response.data.access_token))
           dispatch(setAuthStatus(true));
           SecureStore.setItemAsync("authToken",response.data.access_token)
@@ -113,7 +116,9 @@ const Login = (props) => {
         }}>
           Login to your account! </Text>
           <View style={{
-              flexDirection:'row'
+              flexDirection:'row',
+              borderBottomWidth:2,
+              borderBottomColor:'#006A42'
           }}>
           <Field Iconname="email"
            placeholder="Email"
@@ -130,7 +135,9 @@ const Login = (props) => {
           marginLeft:-200
          }}>{emailError}</Text> : null}
           <View style={{
-              flexDirection:'row'
+              flexDirection:'row',
+              borderBottomWidth:2,
+              borderBottomColor:'#006A42'
           }}>
           <Field placeholder="Password " 
           secureTextEntry={!showPassword}

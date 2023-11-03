@@ -1,10 +1,12 @@
 import { View, Text,Image,StyleSheet } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Shopcards from './Shopcards';
 
+
 const Home = () => {
+ 
   return (
 
     <SafeAreaView>
@@ -33,8 +35,9 @@ const Home = () => {
                 <Text style={{
                      color:'white',
                      fontWeight:'bold',
-                     
-                     fontSize:20,}}
+                     fontSize:20,
+                   
+                  }}
                      >Gocery</Text>
                 <Text
                 style={{

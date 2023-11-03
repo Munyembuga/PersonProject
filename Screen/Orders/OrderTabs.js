@@ -36,11 +36,11 @@ const OrderTabs = () => {
         component={Onprogress}
         options={{ tabBarLabel: "On progrss" }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="CanceledScreen"
         component={CanceledScreen}
         options={{ tabBarLabel: "Canceled" }}
-      />
+      /> */}
     </Tab.Navigator>
    
   );

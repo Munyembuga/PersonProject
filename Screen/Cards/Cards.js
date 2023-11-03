@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet,FlatList } from "react-native";
+import { View, Text, Image, StyleSheet,FlatList,ActivityIndicator ,ScrollView} from "react-native";
 import React,{useState,useEffect} from "react";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -10,14 +10,18 @@ import { getItemAsync } from "expo-secure-store";
 import { useIsFocused } from '@react-navigation/native';
 import NoCards from "./noCards";
 import axios from "axios";
+import CardsBtn from "./cardsBtn";
 
 const Cards = () => {
   const isFocused = useIsFocused()
   const dispatch = useDispatch();
   const {authToken} =useSelector((state) => state.auth);
   const[userCards,setUserCards] =useState([])
+  const[cartsId,setcartsId] =useState(0)
   const [count,setcount] =  useState(0)
+  const [isLoading,setIsLoading] = useState(false)
 
+  console.log(isLoading);
 
   const fetchCards =() =>{
     axios({
@@ -28,23 +32,27 @@ const Cards = () => {
       },
   }).then((response) =>{
     setUserCards(response.data.data.items)
-    console.log(response.data.data.items,"user cards")
+    console.log(response.data.data,"user cards")
+    console.log(response.data.data._id,"user cards")
+    setcartsId(response.data.data._id)
+    console.log(cartsId,"carts Iddd")
     // console.log(response.data.data.items,"user cards")
   }).catch((error)=>{
-    console.errlogor(error,"error to fetch");
+    console.log(error,"error to fetch");
   })
   }
 
   useEffect(()=>{
     console.log("Perfect")
     fetchCards()
-  },[isFocused, count])
+  },[isFocused, count,isLoading])
   
   console.log(count)
-    
-const incrementAmountCards = (itemId) => {
-  const index = userCards.findIndex((cartItem) => cartItem.grocery._id === itemId);
 
+const incrementAmountCards = (itemId) => {
+  
+  const index = userCards.findIndex((cartItem) => cartItem.grocery._id === itemId);
+  setIsLoading(true)
   axios({
     method: 'PATCH',
     url: `https://grocery-9znl.onrender.com/api/v1/cart/updateItem/${itemId}`,
@@ -56,19 +64,29 @@ const incrementAmountCards = (itemId) => {
     },
   })
     .then((response) => {
+      
+      alert("sucess")
       setcount(count+1)
       const updatedUserCards = [...userCards];
       updatedUserCards[index] = response.data.data.item;
       setUserCards(updatedUserCards);
-      console.log(response.data, "Item count updated successfully");
-    })
+      
+    console.log(response.data, "Item count updated successfully");
+     
+  })
     .catch((error) => {
       console.log("Error updating item count:", error.response.data);
-    });
+    })
+   .finally(()=>{
+     setIsLoading(false)
+     
+   })
+  
 };
 
 
 const decrementAmountCards = (itemId) => {
+  setIsLoading(true)
   const index = userCards.findIndex((cartItem) => cartItem.grocery._id === itemId);
 
   if (userCards[index].count > 1) {
@@ -83,15 +101,23 @@ const decrementAmountCards = (itemId) => {
       },
     })
       .then((response) => {
+        alert("sucess")
         setcount(count-1)
         const updatedUserCards = [...userCards];
         updatedUserCards[index] = response.data.data.item;
         setUserCards(updatedUserCards);
+        
         console.log(response.data, "Item count updated successfully");
+        setIsLoading(false)
+        
       })
       .catch((error) => {
         console.log("Error updating item count:", error.response.data);
-      });
+      })
+      .finally(()=>{
+        setIsLoading(false)
+        
+      })
   } else {
     // Handle the case where count is 1 and user tries to decrease further (optional)
     console.log("Item count cannot be less than 1");
@@ -116,7 +142,7 @@ const decrementAmountCards = (itemId) => {
   }
   return (
    
-    
+    <ScrollView>
 <View>
    <View>
     
@@ -132,13 +158,14 @@ const decrementAmountCards = (itemId) => {
           marginBottom: 30,
         }}
       >
-        Cards
+        Carts
       </Text>
       <FlatList 
     data={userCards}
     numColumns={1}
     keyExtractor ={(item)=> item._id} 
     renderItem={({item}) =>( 
+      // <CardsBtn  item={item._id}/>
       <View style={styles.ContainerCards}
       
       >
@@ -265,13 +292,17 @@ const decrementAmountCards = (itemId) => {
               <AntDesign name="minus" size={20} 
               color="#b5b5b5" />
             </TouchableOpacity>
+            {isLoading ?(<ActivityIndicator  
+            color={'#17c568'} size={22}/>) 
+              : 
             <Text
               style={{
                 marginHorizontal: 10,
               }}
             >
-              {item.count}
+             {item.count}
             </Text>
+            }
             <TouchableOpacity  onPress={() => {incrementAmountCards(item.grocery._id)}}>
               <AntDesign name="plus" size={20} color="#17c568" />
             </TouchableOpacity>
@@ -288,7 +319,7 @@ const decrementAmountCards = (itemId) => {
       
       <View
         style={{
-          marginTop: 50,
+          marginTop: 30,
         }}
       >
         <View
@@ -317,8 +348,11 @@ const decrementAmountCards = (itemId) => {
             ${total}
           </Text>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate("Paymentform",{
+        <TouchableOpacity onPress={() => navigation.navigate("Paymentform",
         
+        {
+        totalAmount:total,
+        cartsId:cartsId,
         bottomTabBarVisible: true,}
         )}>
           <View
@@ -349,6 +383,7 @@ const decrementAmountCards = (itemId) => {
 
 
  </View>
+ </ScrollView>
 
   )
 };

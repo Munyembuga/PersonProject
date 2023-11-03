@@ -166,6 +166,8 @@ const Signup = (props) => {
       <View
         style={{
           flexDirection: "row",
+          borderBottomWidth:2,
+          borderBottomColor:'#006A42'
         }}
       >
         <Field
@@ -191,6 +193,8 @@ const Signup = (props) => {
 <View
         style={{
           flexDirection: "row",
+          borderBottomWidth:2,
+          borderBottomColor:'#006A42'
         }}
       >
         <Field
@@ -217,6 +221,8 @@ const Signup = (props) => {
 <View
         style={{
           flexDirection: "row",
+          borderBottomWidth:2,
+          borderBottomColor:'#006A42'
         }}
       >
         <Field
@@ -245,6 +251,8 @@ const Signup = (props) => {
       <View
         style={{
           flexDirection: "row",
+          borderBottomWidth:2,
+          borderBottomColor:'#006A42'
         }}
       >
         <Field
@@ -289,6 +297,8 @@ const Signup = (props) => {
       <View
         style={{
           flexDirection: "row",
+          borderBottomWidth:2,
+          borderBottomColor:'#006A42'
         }}
       >
         <Field
