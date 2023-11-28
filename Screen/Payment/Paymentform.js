@@ -4,7 +4,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
 import { MaterialIcons,MaterialCommunityIcons,Entypo  } from '@expo/vector-icons';
 
-const Paymentform = () => {
+const Paymentform = ({route}) => {
+    const{totalAmount} =route.params
     const navigation=useNavigation()
   return (
     <View style={{
@@ -21,13 +22,15 @@ const Paymentform = () => {
               
           }}>Destination</Text>
           <View style={{
-              flexDirection:'row'
+              flexDirection:'row',
+              marginRight:70,
           }}>
               
-              <Image source={require('../../assets/Vegetables/Orange.png')} style={{
-                  width:130,
-                  height:130,
-                  objectFit:'contain'
+              <Image source={require('../../assets/paymentIcon/paymentIcon2.png')} style={{
+                  width:120,
+                  height:120,
+                  objectFit:'contain',
+                  margin:10,
 
               }}/>
                <Text style={{
@@ -73,14 +76,30 @@ const Paymentform = () => {
           </View>
       </View>
       <View>
-         <Text>Total</Text>
+         {/* <Text>Total</Text> */}
           <View style={{
               flexDirection:'row',
               marginBottom:20,
-              marginTop:20
+              marginTop:40
           }}>
-              <Text>Total</Text>
-              <Text>$98</Text>
+              <Text 
+               style={{
+               
+                fontSize:22,
+                color:'#000',
+                fontWeight:'bold'
+            }}
+              >Total</Text>
+              <Text style={{
+                  marginLeft:220,
+                  fontSize:22,
+                  color:'#000',
+                  fontWeight:'bold'
+              }}>
+                  {/* $98 */}
+                  ${totalAmount}
+
+              </Text>
           </View>
       </View>
       

@@ -43,7 +43,7 @@ import { useSelector } from 'react-redux';
         <FlatList
        
             data={category}
-            numColumns={4}
+            numColumns={3}
             // keyExtractor ={(item)=> item.id} 
 
             // console.log(category)
@@ -55,7 +55,10 @@ import { useSelector } from 'react-redux';
                 <Text style={{
                     fontWeight:'bold',
                     alignItems:'center',
-                    textAlign:'center'
+                    textAlign:'center',
+                    color:'#000',
+                    fontSize:18,
+                    marginTop:-10
                     
                  }}
                  >{item.name}</Text>
@@ -83,17 +86,22 @@ import { useSelector } from 'react-redux';
     }
     const styles = StyleSheet.create({
         image:{
-            width:85,
+            width:90,
             height:120,
             objectFit:'contain'
         },
         container:{
-            width:95,
+            width:115,
             height:140,
             // borderWidth:1,
             marginTop:10,
             // borderColor:'white'
             marginVertical:10,
+            backgroundColor:'#2021',
+            marginHorizontal:4,
+            borderRadius:8,
+            // borderWidth:2
+
            
         }
     

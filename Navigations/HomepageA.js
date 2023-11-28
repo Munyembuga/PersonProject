@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { View, Text } from 'react-native';
+import { View, Text, ImageBackground } from 'react-native';
 import { FontAwesome5 ,FontAwesome,Zocial,MaterialCommunityIcons ,Foundation } from '@expo/vector-icons';
 import Home from '../Screen/Home';
 import Shops from '../Screen/Orders/Shops';
@@ -7,12 +7,21 @@ import Cards from '../Screen/Cards/Cards';
 import Profile from '../Screen/Profile/Profile';
 import Homescreen from '../Screen/Ancountscreen';
 import OrderTabs from '../Screen/Orders/OrderTabs';
+import { setStatusBarBackgroundColor } from 'expo-status-bar';
 const Tab = createBottomTabNavigator();
 
 const HomeNavigator = () => {
     return (
         <Tab.Navigator
         initialRouteName="Home"
+        tabBarOptions={{
+            // activeTintColor: '#101010',
+            style: {
+              backgroundColor: '#ffd700'
+            }
+          }}
+          
+        
         screenOptions={{
           tabBarActiveTintColor: '#08c25e',
           tabBarLabelStyle: {
@@ -21,7 +30,19 @@ const HomeNavigator = () => {
             // marginBottom:2,
              // Adjust the font size of the tab names
           },
+          tabBarStyle:{
+              height:60,
+            //   backgroundColor:'#2021'
+          }
+          
+         
         }}
+       
+        // tabBarOptions ={{
+           
+        //       backgroundColor:'red'
+            
+        // }}
       >
        
             <Tab.Screen name="Shops"
@@ -34,8 +55,8 @@ const HomeNavigator = () => {
                         // } }/>
                         <FontAwesome5 name="shopping-cart"  size={30} color={color}
                         style={{
-                            
-                            marginTop:-12
+                           
+                            // marginTop:-12
                         } }/>
                         
                      
@@ -49,15 +70,15 @@ const HomeNavigator = () => {
             
             />
             <Tab.Screen
-                name="Cards"
+                name="Carts"
                 component={Cards}
                 options={{
                     tabBarIcon: ({ color }) => (
-                        <Zocial name="cart" size={40} color={color} 
+                        <Zocial name="cart" size={30} color={color} 
                         
                         style={{
                            
-                            marginTop:-18
+                            // marginTop:-18
                         } }/>
                     ),
                     headerShown:false
@@ -68,11 +89,11 @@ const HomeNavigator = () => {
                 component={OrderTabs}
                 options={{
                     tabBarIcon:({color})=>(
-                        <FontAwesome name="shopping-bag" size={34} 
+                        <FontAwesome name="shopping-bag" size={30} 
                         color={color}
                         style={{
                            
-                            marginTop:-18
+                            // marginTop:-18
                         } }
                          />
                         // <Foundation name="shopping-cart" size={34} color={color} />
@@ -84,11 +105,11 @@ const HomeNavigator = () => {
                 component={Profile}
                 options={{
                     tabBarIcon:({color})=>(
-                        <MaterialCommunityIcons name="account" size={34} 
+                        <MaterialCommunityIcons name="account" size={30} 
                         color={color}
                         style={{
                            
-                            marginTop:-18
+                            // marginTop:-18
                         } }
                         />
                     )

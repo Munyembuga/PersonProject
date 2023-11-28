@@ -84,16 +84,16 @@ const Router = () => {
                     }}
                 />
                 <Stack.Screen
-                    name={"Cards"}
+                    name={"Carts"}
                     component={Cards}
                 />
 
                 <Stack.Screen
                     name={"Profile"}
                     component={Profile }
-                    options={{
-                        // headerShown: false
-                    }}
+                    // options={{
+                    //     headerShown: false
+                    // }}
                 />
                 <Stack.Screen
                     name={"Details"}

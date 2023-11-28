@@ -113,7 +113,9 @@ const Login = (props) => {
         }}>
           Login to your account! </Text>
           <View style={{
-              flexDirection:'row'
+              flexDirection:'row',
+              borderBottomWidth:2,
+              borderBottomColor:'#006A42'
           }}>
           <Field Iconname="email"
            placeholder="Email"
@@ -130,7 +132,9 @@ const Login = (props) => {
           marginLeft:-200
          }}>{emailError}</Text> : null}
           <View style={{
-              flexDirection:'row'
+              flexDirection:'row',
+              borderBottomWidth:2,
+              borderBottomColor:'#006A42'
           }}>
           <Field placeholder="Password " 
           secureTextEntry={!showPassword}

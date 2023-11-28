@@ -22,7 +22,7 @@ const EditProfile = () => {
     const [location, setLocation] = useState('');
     const [dateOfBirth, setDateOfBirth] = useState('');
     const [image, setImage] = useState(null);
-//    const[isLoading,setIsLoading] =useState(false)
+   const[isLoading,setIsLoading] =useState(false)
     const { authToken } = useSelector((state) => state.auth);
     const formData = new FormData();
 
@@ -32,7 +32,7 @@ const EditProfile = () => {
         },7000)
     }
 
-  
+  console.log(isLoading)
   
     const pickImage = async () => {
 
@@ -71,6 +71,7 @@ const EditProfile = () => {
       })
   
       try {
+        setIsLoading(true)
         const response = await axios.patch('https://grocery-9znl.onrender.com/api/v1/auth/users/updateProfile', formData, {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -82,9 +83,13 @@ const EditProfile = () => {
         console.log(response.data, "jjags");
         await SecureStore.setItemAsync("authProfile",JSON.stringify(response.data))
         alert('Update Profile Success');
+        navigation.navigate("Profile")
+        setIsLoading(false)
       } catch (error) {
+        setIsLoading(true)
         console.log(error, 'error to update');
         alert('Update Profile Failed');
+        setIsLoading(false)
       }
     //   finally {
     //     setIsLoading(false);
@@ -96,7 +101,7 @@ const EditProfile = () => {
     <View style={{
         marginLeft:30
     }}>
-      <Text>EditProfile</Text>
+      {/* <Text>EditProfile</Text> */}
       <TouchableOpacity onPress={()=>{pickImage()}}>
 
       <View style={{
@@ -232,7 +237,7 @@ const EditProfile = () => {
       <TouchableOpacity onPress={()=>{
           updateProfile()
 
-          handleNavigateProfile()
+       
         }
         
    
@@ -241,9 +246,9 @@ const EditProfile = () => {
       <View style={{
           backgroundColor:'#00be5e',
           width:"60%",
-          height:30,
+          height:40,
           borderRadius:10,
-          marginTop:70,
+          marginTop:30,
           marginLeft:45,
         alignItems:'center'
           
@@ -252,14 +257,17 @@ const EditProfile = () => {
           
       }}>
          
-        
-          
-          <Text style={{
-              color:'white',
-              fontSize:20,
-              paddingLeft:45
+        {isLoading?(<ActivityIndicator color={"#fff"} size={22}/>)
+    :       <Text style={{
+        color:'white',
+        fontSize:20,
+        paddingLeft:5,
+        paddingTop:5
 
-          }}>Upadte Profile</Text>
+    }}>Upadte Profile</Text>  
+    }
+          
+     
        
       </View>
       </TouchableOpacity>

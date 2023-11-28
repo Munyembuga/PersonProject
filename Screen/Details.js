@@ -1,5 +1,5 @@
-import { View, Text,StyleSheet,Image } from 'react-native'
-import React, { useContext } from 'react'
+import { View, Text,StyleSheet,Image,ActivityIndicator } from 'react-native'
+import React, { useContext, useState } from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
 import { addCards } from './Cards/storeCards'
@@ -7,14 +7,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setAuthLoaded, setAuthToken,setAuthStatus } from './Autho/Slice'
 import { setAddCards } from './Cards/sliceCards'
 import axios from 'axios'
+
 const Details = ({route}) => {
     const item = route.params
     console.log(item,"item")
     const navigation=useNavigation();
     const dispatch = useDispatch();
+    const [isLoading,setIsLoading] = useState(false)
     const selectCards =useSelector((state) => state.cards.card)
     const {authToken} =useSelector((state) => state.auth);
     const AddcardsItem = async()=>{
+        setIsLoading(true)
         axios({
             method:"POST",
             url:` https://grocery-9znl.onrender.com/api/v1/cart/add`,
@@ -30,9 +33,18 @@ const Details = ({route}) => {
         .then((response) =>{
             alert("sucess")
             console.log(response,"sucess to add")
+            navigation.navigate('Vegetables')
+
         }).catch((error) =>{
+            alert("Fail to Add Carts")
             console.log(error,"fail to add cars")
+            navigation.navigate('Vegetables')
+        }).finally(()=>{
+            setIsLoading(false)
+
         })
+       
+
     }
 
 
@@ -115,16 +127,28 @@ const Details = ({route}) => {
               }} >
             {item.description}
               </Text>
-            <TouchableOpacity onPress ={ () => AddcardsItem() 
+            <TouchableOpacity onPress ={ () => 
+            
+            {
+                AddcardsItem() 
+           
+            }
+
            
                 // addCardsData(item)
                 // navigation.navigate("Cards",item)
                 }>
+                    <View  style={styles.cardsbtn}>
              {/* <TouchableOpacity> */}
+             {isLoading?(<ActivityIndicator color={'#fff'} size={22}/>)
+             :( <Text style={{
+                 color:'#fff'
+             }}>
+                Add cards
+            </Text>)
+             }
 
-                <Text style={styles.cardsbtn}>
-                    Add cards
-                </Text>
+            </View>
           </TouchableOpacity>
       </View>
     </View>

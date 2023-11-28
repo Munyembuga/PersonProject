@@ -241,7 +241,7 @@ console.log(user,'error emailg')
         <Text style={{
           marginLeft:140,
           fontSize:25,
-          color:'#00fa9a',
+          color:'#00be5e',
           fontWeight:'400'
         }}>Logout</Text>
       </View>

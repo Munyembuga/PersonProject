@@ -19,6 +19,8 @@ const Vegetablesshop = ({route}) => {
   // console.log("filter data",filteredData)
   const {authToken} =useSelector((state) => state.auth);
     const [grocery,setGrocery] = useState([])
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredGrocery, setFilteredGrocery] = useState([]);
     const fetchGrocery= async () =>{
         axios({
             method:'GET',
@@ -41,24 +43,38 @@ const Vegetablesshop = ({route}) => {
             fetchGrocery()
         }
     }),[authToken]
+    useEffect(() => {
+      // Filter grocery items based on the search query
+      const filteredData = grocery.filter((item) =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredGrocery(filteredData);
+    }, [searchQuery, grocery]);
   return (
     <View>
       <View>
         <View style={styles.search}>
-        <TextInput placeholder='search' style={{
+        <TextInput placeholder='search'
+        onChangeText ={(text) => setSearchQuery(text)}
+        value={searchQuery} 
+       style={{
        marginLeft:15,
-       fontSize:20
+       fontSize:20,
+      
        
         }}
         placeholderTextColor="black"/>
         <EvilIcons name="search" size={24} color="black" style={{
-          fontWeight:'bold'
+          fontWeight:'bold',
+          marginRight:10,
+          textAlign:'center',
+          marginTop:2
         }}/>
         </View>
       {/* <Text>{title}</Text> */}
      
       <FlatList 
-      data={grocery}
+      data={filteredGrocery}
       numColumns={2}
       keyExtractor ={(item)=> item.id} 
       renderItem={({ item }) =>(
@@ -76,10 +92,9 @@ const Vegetablesshop = ({route}) => {
       }}>{item.name}</Text>
        <Text
        style={{
-    
         marginLeft:10,
         fontWeight:'400',
-        color:'Gray'
+        color:'gray',
 
       }}>{item.amount}</Text>
       <View style={styles.shopdown}>
@@ -198,25 +213,32 @@ const styles = StyleSheet.create({
     // borderWidth:2,
     width:180,
     height:300,
-    marginLeft:15
+    marginLeft:10,
+    backgroundColor:'#2021',
+    marginHorizontal:4,
+    marginVertical:2
 
 
   },
   image:{
     width:150,
     height:190,
-    objectFit:'contain'
+    objectFit:'contain',
+    marginLeft:10
   },
   shopdown:{
     flexDirection:'row',
     marginTop:10
   },
   search:{
-    width:'80%',
-    height:20,
+    width:'85%',
+    height:26,
     flexDirection:'row',
     marginVertical:20,
-    justifyContent:'space-between'
+    justifyContent:'space-between',
+    backgroundColor:'#2021',
+    marginLeft:10,
+    borderRadius:20
   }
 })
 
